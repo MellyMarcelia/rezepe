@@ -1,35 +1,338 @@
-@import './base.css';
+/* Type follows the logo: Sansita for display, and Asap — its companion from the same foundry
+   (Omnibus-Type) — for interface and reading text. */
+@import '@fontsource/sansita/400-italic.css';
+@import '@fontsource/sansita/700.css';
+@import '@fontsource/sansita/800.css';
+@import '@fontsource/sansita/900.css';
+@import '@fontsource-variable/asap';
+@import '@fontsource-variable/asap/wght-italic.css';
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+:root {
+  /* Brand — sampled from the Figma file ("orange & wine") */
+  --wine: #690202;
+  --wine-700: #4f0101;
+  --orange: #ff9623;
+  --burnt: #db6f02;
+  --amber: #feb825;
+  --peach: #ffd79c;
+  --brown: #8d4200;
+  --cream: #fff6e9;
+  --cream-200: #fbead3;
+
+  /* Roles */
+  --bg: var(--cream);
+  --surface: #ffffff;
+  --surface-sunk: #fdf0dd;
+  --ink: #3a1a10;
+  --ink-muted: #7a5546;
+  --heading: var(--wine);
+  --line: #f0dcc2;
+  --focus: #1d4ed8;
+
+  --font-display: 'Sansita', 'Asap Variable', system-ui, sans-serif;
+  --font-body: 'Asap Variable', system-ui, sans-serif;
+  --font-brand: 'Sansita', var(--font-display); /* logo wordmark only */
+
+  --radius-sm: 10px;
+  --radius: 18px;
+  --radius-lg: 28px;
+  --shadow: 0 1px 2px rgb(105 2 2 / 6%), 0 6px 20px rgb(141 66 0 / 8%);
+  --shadow-lift: 0 2px 4px rgb(105 2 2 / 8%), 0 14px 34px rgb(141 66 0 / 14%);
+
+  --rail-w: 96px;
+  --tabbar-h: 76px;
+  --gutter: clamp(16px, 3.2vw, 36px);
+  --content-w: 1180px;
 }
 
-a,
-.green {
+/* Desktop: full labelled sidebar and a wider reading area. */
+@media (min-width: 1280px) {
+  :root {
+    --rail-w: 256px;
+    --gutter: 44px;
+    --content-w: 1320px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  scroll-padding-top: 80px;
+}
+
+/* Controls behave like native UI: no accidental text selection or iOS callouts. */
+button,
+nav,
+.chip,
+.btn {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Photos fade in over a warm placeholder instead of popping in. */
+img[loading='lazy'] {
+  animation: img-in 0.4s ease both;
+}
+
+@keyframes img-in {
+  from {
+    opacity: 0;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  color: var(--heading);
+  font-weight: 700;
+  line-height: 1.12;
+  margin: 0;
+  letter-spacing: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+img {
+  display: block;
+  max-width: 100%;
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ---------- Shared building blocks ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 0;
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  transition:
+    transform 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--wine);
+  color: var(--cream);
+}
+
+.btn-primary:hover {
+  background: var(--wine-700);
+}
+
+.btn-accent {
+  background: var(--orange);
+  color: var(--wine-700);
+}
+
+.btn-accent:hover {
+  background: var(--amber);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--wine);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+}
+
+.btn-ghost:hover {
+  background: var(--surface-sunk);
+}
+
+.btn-icon {
+  width: 44px;
+  padding: 0;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--burnt);
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.page {
+  padding: 28px var(--gutter) 48px;
+  max-width: var(--content-w);
+  margin: 0 auto;
+}
+
+.section {
+  margin-top: 40px;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.section-head h2 {
+  font-size: 26px;
+}
+
+.section-head a {
+  font-weight: 600;
+  color: var(--burnt);
+  font-size: 15px;
+}
+
+.section-head a:hover {
+  text-decoration: underline;
+}
+
+.scroller {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 4px var(--gutter) 16px;
+  margin: 0 calc(var(--gutter) * -1);
+  scrollbar-width: none;
+}
+
+.scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.scroller > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field > span {
+  font-weight: 600;
+  color: var(--wine);
+}
+
+.input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  transition: border-color 0.15s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 4px rgb(255 150 35 / 20%);
+}
+
+textarea.input {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--wine);
+  border-color: var(--wine);
+  color: var(--cream);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

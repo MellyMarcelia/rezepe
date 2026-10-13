@@ -1,85 +1,70 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { computed } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
+import AppNav from '@/components/AppNav.vue'
+import SplashScreen from '@/components/SplashScreen.vue'
+import ToastHost from '@/components/ToastHost.vue'
+
+const route = useRoute()
+const immersive = computed(() => !!route.meta.immersive)
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <SplashScreen />
+  <a href="#main" class="skip">Skip to content</a>
+  <AppNav v-if="!immersive" />
+  <main id="main" :class="{ 'with-nav': !immersive }">
+    <RouterView v-slot="{ Component }">
+      <Transition name="page" mode="out-in">
+        <component :is="Component" :key="route.path" />
+      </Transition>
+    </RouterView>
+  </main>
+  <ToastHost />
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.skip {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 50;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--wine);
+  color: var(--cream);
+  font-weight: 600;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.skip:focus {
+  top: 12px;
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+main.with-nav {
+  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+/* Quick, quiet screen change — enough to feel native without slowing navigation down. */
+.page-enter-active,
+.page-leave-active {
+  transition:
+    opacity 0.16s ease,
+    transform 0.2s ease;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+.page-leave-to {
+  opacity: 0;
 }
 
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
+@media (min-width: 1000px), (orientation: landscape) and (min-width: 900px) {
+  main.with-nav {
+    padding-bottom: 0;
+    padding-left: var(--rail-w);
   }
 }
 </style>
